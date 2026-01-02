@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>7A Life-changing inventions – Vocabulary Practice</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:1050px;margin:22px auto;padding:0 14px;line-height:1.45}
+    h1{font-size:1.35rem;margin:0 0 6px}
+    h2{font-size:1.15rem;margin:22px 0 10px}
+    .sub{color:#555;margin:0 0 14px}
+    .card{border:1px solid #ddd;border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    button{padding:10px 14px;border-radius:12px;border:1px solid #bbb;background:#fff;cursor:pointer}
+    button:hover{background:#f6f6f6}
+    select{padding:8px 10px;border-radius:10px;border:1px solid #bbb;background:#fff;min-width:210px}
+    .result{border:1px solid #ddd;background:#fafafa;border-radius:14px;padding:12px 14px;display:none}
+    .ok{color:#0a7a2f}
+    .bad{color:#b00020}
+    .small{color:#666;font-size:.93rem}
+    ol{margin:8px 0 0 20px}
+    .grid2{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:860px){ .grid2{grid-template-columns:1fr 1fr;} }
+
+    /* Drag & drop */
+    .bank{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      border:1px solid #bbb;border-radius:999px;padding:7px 10px;background:#fff;
+      cursor:grab; user-select:none; font-size:.95rem
+    }
+    .chip:active{cursor:grabbing}
+    .chip.used{opacity:.45; cursor:not-allowed}
+    table{border-collapse:separate;border-spacing:0;width:100%;overflow:hidden;border-radius:14px;border:1px solid #ddd}
+    th,td{border-bottom:1px solid #eee;border-right:1px solid #eee;padding:10px;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    td:last-child, th:last-child{border-right:none}
+    th{background:#fafafa;text-align:left}
+    .drop{
+      min-height:42px;border:1px dashed #bbb;border-radius:12px;padding:8px;background:#fff
+    }
+    .drop.over{background:#f4f4f4}
+    .drop.filled{border-style:solid}
+    .drop .placed{display:inline-block;border:1px solid #bbb;border-radius:999px;padding:6px 10px;background:#fff}
+    .hint{margin-top:8px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #ddd;font-size:.85rem;margin-left:6px;color:#444}
+    .note{background:#fff7e6;border:1px solid #ffe2ad}
+  </style>
+</head>
+<body>
+  <h1>Unit 7A – Vocabulary Practice</h1>
+  <p class="sub">Part A: match words and definitions. Part B: drag word-family forms into the table (Noun–Verb–Adjective).</p>
+
+  <!-- Part A -->
+  <div class="card">
+    <h2>A. Matching (Words ↔ Definitions)</h2>
+    <p class="small">Choose the correct definition letter (A–L) for each word. Then click <strong>Check A</strong>.</p>
+
+    <div class="grid2" id="matchArea"></div>
+
+    <div class="btns">
+      <button type="button" onclick="checkA()">Check A</button>
+      <button type="button" onclick="resetA()">Reset A</button>
+      <button type="button" onclick="revealA()">Reveal A</button>
+    </div>
+
+    <div id="resultA" class="result"></div>
+  </div>
+
+  <!-- Part B -->
+  <div class="card">
+    <h2>B. Word family drag-and-drop (Noun – Verb – Adjective)</h2>
+    <p class="small">Drag the chips into the correct cells. Use <strong>—</strong> if there is no common form. Then click <strong>Check B</strong>.</p>
+
+    <div class="card note">
+      <div class="small"><strong>Teacher note:</strong> Some words have more than one possible form in real English. This activity uses one “best answer” per cell for fast checking.</div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div style="flex:1;min-width:260px">
+          <div class="small" style="margin-bottom:8px"><strong>Word bank (drag these):</strong></div>
+          <div id="bank" class="bank"></div>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:26%">Word family</th>
+          <th style="width:24%">Noun</th>
+          <th style="width:24%">Verb</th>
+          <th style="width:26%">Adjective</th>
+        </tr>
+      </thead>
+      <tbody id="familyTable"></tbody>
+    </table>
+
+    <div class="btns">
+      <button type="button" onclick="checkB()">Check B</button>
+      <button type="button" onclick="resetB()">Reset B</button>
+      <button type="button" onclick="revealB()">Reveal B</button>
+    </div>
+
+    <div id="resultB" class="result"></div>
+  </div>
+
+<script>
+/* ---------------- Part A (Matching) ---------------- */
+const A_words = [
+  "invention","inventor","improve","design","discover","material",
+  "protect","device","blind / visually impaired","pedestrian crossing","industry","equipment"
+];
+
+const A_defs = {
+  "A":"a place where people walk across a road safely",
+  "B":"unable to see; having limited vision",
+  "C":"to find something, often unexpectedly",
+  "D":"a tool or machine made for a particular purpose",
+  "E":"tools/items needed for an activity",
+  "F":"to make something better",
+  "G":"businesses that produce goods (e.g., the plane industry)",
+  "H":"what something is made from",
+  "I":"to keep safe from harm",
+  "J":"something new that is created to solve a problem",
+  "K":"a person who creates a new thing",
+  "L":"to plan how something will look/work; the plan itself"
+};
+
+const A_key = {
+  "invention":"J",
+  "inventor":"K",
+  "improve":"F",
+  "design":"L",
+  "discover":"C",
+  "material":"H",
+  "protect":"I",
+  "device":"D",
+  "blind / visually impaired":"B",
+  "pedestrian crossing":"A",
+  "industry":"G",
+  "equipment":"E"
+};
+
+function renderA(){
+  const root = document.getElementById("matchArea");
+  root.innerHTML = "";
+  A_words.forEach((w, idx) => {
+    const box = document.createElement("div");
+    box.className = "card";
+    const title = document.createElement("div");
+    title.innerHTML = `<strong>${idx+1})</strong> ${w}`;
+    title.style.marginBottom = "8px";
+
+    const sel = document.createElement("select");
+    sel.id = `A_${idx}`;
+    const ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = "Choose A–L…";
+    ph.disabled = true;
+    ph.selected = true;
+    sel.appendChild(ph);
+
+    Object.keys(A_defs).forEach(letter => {
+      const opt = document.createElement("option");
+      opt.value = letter;
+      opt.textContent = `${letter}. ${A_defs[letter]}`;
+      sel.appendChild(opt);
+    });
+
+    const hint = document.createElement("div");
+    hint.id = `Ah_${idx}`;
+    hint.className = "small hint";
+
+    box.appendChild(title);
+    box.appendChild(sel);
+    box.appendChild(hint);
+    root.appendChild(box);
+  });
+}
+
+function checkA(){
+  let score = 0;
+  let unanswered = 0;
+
+  A_words.forEach((w, idx) => {
+    const sel = document.getElementById(`A_${idx}`);
+    const hint = document.getElementById(`Ah_${idx}`);
+    const chosen = sel.value;
+    hint.textContent = "";
+    if(!chosen){unanswered++; hint.innerHTML = `<span class="bad">No answer.</span>`; return;}
+    if(chosen === A_key[w]){score++; hint.innerHTML = `<span class="ok">Correct.</span>`;}
+    else{hint.innerHTML = `<span class="bad">Not quite.</span> <span class="tag">Correct: ${A_key[w]}</span>`;}
+  });
+
+  const res = document.getElementById("resultA");
+  res.style.display = "block";
+  res.innerHTML = `<div><strong>Part A score:</strong> ${score} / ${A_words.length}</div>` +
+                  (unanswered ? `<div class="small" style="margin-top:6px">Unanswered: ${unanswered}</div>` : "");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function resetA(){
+  A_words.forEach((w, idx) => {
+    document.getElementById(`A_${idx}`).selectedIndex = 0;
+    document.getElementById(`Ah_${idx}`).textContent = "";
+  });
+  const res = document.getElementById("resultA");
+  res.style.display = "none";
+  res.innerHTML = "";
+}
+
+function revealA(){
+  A_words.forEach((w, idx) => {
+    document.getElementById(`A_${idx}`).value = A_key[w];
+    document.getElementById(`Ah_${idx}`).innerHTML = `<span class="tag">Answer: ${A_key[w]}</span>`;
+  });
+}
+
+/* ---------------- Part B (Drag table) ---------------- */
+const B_rows = [
+  {family:"invent", noun:"invention", verb:"invent", adj:"inventive"},
+  {family:"improve", noun:"improvement", verb:"improve", adj:"improved"},
+  {family:"design", noun:"design", verb:"design", adj:"designed"},
+  {family:"discover", noun:"discovery", verb:"discover", adj:"discovered"},
+  {family:"protect", noun:"protection", verb:"protect", adj:"protective"},
+  {family:"equip", noun:"equipment", verb:"equip", adj:"equipped"},
+  {family:"industry", noun:"industry", verb:"—", adj:"industrial"},
+  {family:"vision", noun:"vision", verb:"—", adj:"visual"},
+  {family:"blind", noun:"blindness", verb:"blind", adj:"blind"}
+];
+
+// Word bank chips (include multiple "—" chips)
+const bankWords = [
+  "invention","invent","inventive",
+  "improvement","improve","improved",
+  "design","designed",
+  "discovery","discover","discovered",
+  "protection","protect","protective",
+  "equipment","equip","equipped",
+  "industry","industrial",
+  "vision","visual",
+  "blindness","blind",
+  "—","—","—","—","—","—"
+];
+
+let draggedId = null;
+
+function renderB(){
+  // Bank
+  const bank = document.getElementById("bank");
+  bank.innerHTML = "";
+  bankWords.forEach((w, i) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.textContent = w;
+    chip.draggable = true;
+    chip.id = `chip_${i}`;
+    chip.dataset.value = w;
+
+    chip.addEventListener("dragstart", (ev) => {
+      if(chip.classList.contains("used")){ ev.preventDefault(); return; }
+      draggedId = chip.id;
+      ev.dataTransfer.setData("text/plain", chip.id);
+    });
+
+    bank.appendChild(chip);
+  });
+
+  // Table rows
+  const tbody = document.getElementById("familyTable");
+  tbody.innerHTML = "";
+  B_rows.forEach((r, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong>${r.family}</strong></td>
+      <td><div class="drop" id="drop_${idx}_noun" data-ans="${r.noun}"></div></td>
+      <td><div class="drop" id="drop_${idx}_verb" data-ans="${r.verb}"></div></td>
+      <td><div class="drop" id="drop_${idx}_adj" data-ans="${r.adj}"></div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Attach drop listeners
+  document.querySelectorAll(".drop").forEach(zone => {
+    zone.addEventListener("dragover", (ev) => { ev.preventDefault(); zone.classList.add("over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+    zone.addEventListener("drop", (ev) => {
+      ev.preventDefault();
+      zone.classList.remove("over");
+
+      const chipId = ev.dataTransfer.getData("text/plain");
+      if(!chipId) return;
+      const chip = document.getElementById(chipId);
+      if(!chip || chip.classList.contains("used")) return;
+
+      // If zone already has a placed chip, return it to bank
+      const existing = zone.querySelector(".placed");
+      if(existing){
+        const oldChipId = existing.dataset.chipid;
+        // reactivate old chip
+        const oldChip = document.getElementById(oldChipId);
+        if(oldChip) oldChip.classList.remove("used");
+        zone.innerHTML = "";
+        zone.classList.remove("filled");
+      }
+
+      // Place new chip
+      const placed = document.createElement("span");
+      placed.className = "placed";
+      placed.textContent = chip.dataset.value;
+      placed.dataset.chipid = chip.id;
+      zone.appendChild(placed);
+      zone.classList.add("filled");
+
+      chip.classList.add("used");
+    });
+
+    // Click to remove placed chip (optional)
+    zone.addEventListener("click", () => {
+      const placed = zone.querySelector(".placed");
+      if(!placed) return;
+      const chipId = placed.dataset.chipid;
+      const chip = document.getElementById(chipId);
+      if(chip) chip.classList.remove("used");
+      zone.innerHTML = "";
+      zone.classList.remove("filled");
+    });
+  });
+}
+
+function checkB(){
+  let score = 0;
+  let total = 0;
+  let empty = 0;
+
+  document.querySelectorAll(".drop").forEach(zone => {
+    total += 1;
+    const ans = zone.dataset.ans;
+    const placed = zone.querySelector(".placed");
+    const val = placed ? placed.textContent : "";
+    if(!val){ empty += 1; zone.style.borderColor = "#bbb"; return; }
+    if(val === ans){
+      score += 1;
+      zone.style.borderColor = "#0a7a2f";
+    } else {
+      zone.style.borderColor = "#b00020";
+    }
+  });
+
+  const res = document.getElementById("resultB");
+  res.style.display = "block";
+  res.innerHTML = `<div><strong>Part B score:</strong> ${score} / ${total}</div>` +
+                  (empty ? `<div class="small" style="margin-top:6px">Empty cells: ${empty}</div>` : "") +
+                  `<div class="small" style="margin-top:6px">Tip: click a filled cell to remove a chip and try again.</div>`;
+}
+
+function resetB(){
+  // Clear drops and reactivate chips
+  document.querySelectorAll(".drop").forEach(zone => {
+    const placed = zone.querySelector(".placed");
+    if(placed){
+      const chipId = placed.dataset.chipid;
+      const chip = document.getElementById(chipId);
+      if(chip) chip.classList.remove("used");
+    }
+    zone.innerHTML = "";
+    zone.classList.remove("filled");
+    zone.style.borderColor = "#bbb";
+  });
+  const res = document.getElementById("resultB");
+  res.style.display = "none";
+  res.innerHTML = "";
+}
+
+function revealB(){
+  // First reset
+  resetB();
+
+  // Fill each zone with correct answer by using an available chip of that value (or create a visual token)
+  const chips = Array.from(document.querySelectorAll(".chip"));
+  function useChip(value){
+    const chip = chips.find(c => !c.classList.contains("used") && c.dataset.value === value);
+    if(chip){ chip.classList.add("used"); return chip; }
+    return null; // should not happen (but just in case)
+  }
+
+  B_rows.forEach((r, idx) => {
+    [["noun", r.noun], ["verb", r.verb], ["adj", r.adj]].forEach(([slot, value]) => {
+      const zone = document.getElementById(`drop_${idx}_${slot}`);
+      const chip = useChip(value);
+      const placed = document.createElement("span");
+      placed.className = "placed";
+      placed.textContent = value;
+      placed.dataset.chipid = chip ? chip.id : "";
+      zone.appendChild(placed);
+      zone.classList.add("filled");
+      zone.style.borderColor = "#0a7a2f";
+    });
+  });
+
+  const res = document.getElementById("resultB");
+  res.style.display = "block";
+  res.innerHTML = `<div class="ok"><strong>Answers revealed.</strong></div>`;
+}
+
+/* Init */
+renderA();
+renderB();
+</script>
+</body>
+</html>
